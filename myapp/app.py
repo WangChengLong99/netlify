@@ -1,20 +1,27 @@
-from shiny import App, render, ui
+from shiny import App, render, ui, reactive
 import pandas as pd
-import numpy as np
 
-data = pd.Series([1,2,3])
 
 app_ui = ui.page_fluid(
-    ui.h2("Hello Shiny!"),
-    ui.input_slider("n", "N", 0, 100, 20),
-    ui.output_text_verbatim("txt"),
+    ui.h1("pandas"),
+    ui.input_text_area("data_path","输入数据路径","D://myblog/library/data/数据/学生.csv"),
+    # 因为我们无法直接导入数据，所以输入数据路径后，手动的展示数据
+    ui.input_action_button("show_data","生成数据"),
+    ui.output_table("show_table")
 )
 
 def server(input, output, session):
+    @reactive.Calc
+    def get_data():
+        return pd.read_csv(input.data_path())
+    # @reactive.Effect
+    # def get_data():
+    #     pd.read_csv(input.data_path())
     @output
-    @render.text
-    def txt():
-        return f"n*2+data[2] is {input.n() * 2 + data[2]}"
-
+    @render.table
+    @reactive.event(input.show_data)
+    def show_table():
+        data = get_data()
+        return data.head(10)
 
 app = App(app_ui, server)
