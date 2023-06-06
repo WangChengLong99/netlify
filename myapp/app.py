@@ -1,6 +1,8 @@
 from shiny import App, render, ui, reactive
 import pandas as pd
 import numpy as np
+import micropip
+micropip.install("matplotlib")
 import matplotlib.pyplot as plt
 plt.rcParams['font.sans-serif']=['Simhei']; #SimHei黑体 
 plt.rcParams['axes.unicode_minus']=False; #正常显示图中负号
